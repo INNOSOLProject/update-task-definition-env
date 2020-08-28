@@ -70,12 +70,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateTaskDefinitionFile = void 0;
 const fs_1 = __importDefault(__webpack_require__(747));
 const path_1 = __importDefault(__webpack_require__(622));
-const workspace = process.env.GITHUB_WORKSPACE || '';
-function updateTaskDefinitionFile(file, variables) {
+function updateTaskDefinitionFile(file, variables, directory = process.env.GITHUB_WORKSPACE) {
     return __awaiter(this, void 0, void 0, function* () {
-        const definition = JSON.parse(yield readFile(file));
+        const definition = JSON.parse(yield fs_1.default.promises.readFile(path_1.default.join(directory, file), 'utf-8'));
         const updatedDefinition = updateTaskDefinition(definition, variables);
-        return writeFile(file, JSON.stringify(updatedDefinition));
+        return fs_1.default.promises.writeFile(path_1.default.join(directory, file), JSON.stringify(updatedDefinition));
     });
 }
 exports.updateTaskDefinitionFile = updateTaskDefinitionFile;
@@ -95,16 +94,6 @@ function updateTaskDefinition(definition, variables) {
         }));
     }
     return definition;
-}
-function readFile(file) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return fs_1.default.promises.readFile(path_1.default.join(workspace, file), 'utf-8');
-    });
-}
-function writeFile(file, contents) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return fs_1.default.promises.writeFile(path_1.default.join(workspace, file), contents);
-    });
 }
 
 

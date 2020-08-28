@@ -14,7 +14,7 @@ test('updates task def', async () => {
 
   await fs.promises.writeFile(path, testData)
 
-  await updateTaskDefinitionFile(path, variables)
+  await updateTaskDefinitionFile(path, variables, '')
 
   const resultDef = JSON.parse(await fs.promises.readFile(path, 'utf-8'))
 
