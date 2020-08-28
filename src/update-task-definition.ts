@@ -6,15 +6,19 @@ interface TaskDefEnvVar {
   value: string
 }
 
-const workspace: string = (process.env.GITHUB_WORKSPACE as string) || ''
-
 export async function updateTaskDefinitionFile(
   file: string,
-  variables: Record<string, unknown>
+  variables: Record<string, unknown>,
+  directory = process.env.GITHUB_WORKSPACE as string
 ): Promise<void> {
-  const definition = JSON.parse(await readFile(file))
+  const definition = JSON.parse(
+    await fs.promises.readFile(path.join(directory, file), 'utf-8')
+  )
   const updatedDefinition = updateTaskDefinition(definition, variables)
-  return writeFile(file, JSON.stringify(updatedDefinition))
+  return fs.promises.writeFile(
+    path.join(directory, file),
+    JSON.stringify(updatedDefinition)
+  )
 }
 
 function updateTaskDefinition(
@@ -39,12 +43,4 @@ function updateTaskDefinition(
   }
 
   return definition
-}
-
-async function readFile(file: string): Promise<string> {
-  return fs.promises.readFile(path.join(workspace, file), 'utf-8')
-}
-
-async function writeFile(file: string, contents: string): Promise<void> {
-  return fs.promises.writeFile(path.join(workspace, file), contents)
 }
