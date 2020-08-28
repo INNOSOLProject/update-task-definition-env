@@ -1,11 +1,14 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Update Task Definition Environment'
+description: 'Action to update AWS task-definition environment variables'
+author: 'INNOSOL'
 inputs:
-  milliseconds: # change this
+  variables:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'JSON-stringified object of environment variables'
+  task-definition-file:
+    required: true
+    description: 'The task definition JSON file'
+    default: 'task-definition.json'
 runs:
   using: 'node12'
   main: 'dist/index.js'
