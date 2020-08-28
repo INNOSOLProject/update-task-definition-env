@@ -49,6 +49,67 @@ require('./sourcemap-register.js');module.exports =
 /************************************************************************/
 /******/ ({
 
+/***/ 11:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateTaskDefinitionFile = void 0;
+const fs_1 = __importDefault(__webpack_require__(747));
+const path_1 = __importDefault(__webpack_require__(622));
+const workspace = process.env.GITHUB_WORKSPACE || '';
+function updateTaskDefinitionFile(file, variables) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const definition = JSON.parse(yield readFile(file));
+        const updatedDefinition = updateTaskDefinition(definition, variables);
+        return writeFile(file, JSON.stringify(updatedDefinition));
+    });
+}
+exports.updateTaskDefinitionFile = updateTaskDefinitionFile;
+function updateTaskDefinition(definition, variables) {
+    for (const containerDef of definition.containerDefinitions) {
+        const variablesCopy = JSON.parse(JSON.stringify(variables));
+        if (containerDef.hasOwnProperty('environment')) {
+            for (const envVar of containerDef.environment) {
+                if (variablesCopy.hasOwnProperty(envVar.name)) {
+                    envVar.value = variablesCopy[envVar.name];
+                    delete variablesCopy[envVar.name];
+                }
+            }
+        }
+        containerDef.environment = (containerDef.environment || []).concat(Object.entries(variablesCopy).map(([name, value]) => {
+            return { name, value };
+        }));
+    }
+    return definition;
+}
+function readFile(file) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return fs_1.default.promises.readFile(path_1.default.join(workspace, file), 'utf-8');
+    });
+}
+function writeFile(file, contents) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return fs_1.default.promises.writeFile(path_1.default.join(workspace, file), contents);
+    });
+}
+
+
+/***/ }),
+
 /***/ 87:
 /***/ (function(module) {
 
@@ -76,7 +137,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -91,16 +152,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(186));
-const wait_1 = __webpack_require__(817);
+const update_task_definition_1 = __webpack_require__(11);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const ms = core.getInput('milliseconds');
-            core.debug(`Waiting ${ms} milliseconds ...`); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-            core.debug(new Date().toTimeString());
-            yield wait_1.wait(parseInt(ms, 10));
-            core.debug(new Date().toTimeString());
-            core.setOutput('time', new Date().toTimeString());
+            const variables = JSON.parse(core.getInput('variables'));
+            const file = core.getInput('task-definition-file');
+            yield update_task_definition_1.updateTaskDefinitionFile(file, variables);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -447,34 +505,10 @@ module.exports = require("path");
 
 /***/ }),
 
-/***/ 817:
-/***/ (function(__unusedmodule, exports) {
+/***/ 747:
+/***/ (function(module) {
 
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.wait = void 0;
-function wait(milliseconds) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => {
-            if (isNaN(milliseconds)) {
-                throw new Error('milliseconds not a number');
-            }
-            setTimeout(() => resolve('done!'), milliseconds);
-        });
-    });
-}
-exports.wait = wait;
-
+module.exports = require("fs");
 
 /***/ })
 
