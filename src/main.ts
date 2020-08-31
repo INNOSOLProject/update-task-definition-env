@@ -4,7 +4,7 @@ import {updateTaskDefinitionFile} from './update-task-definition'
 async function run(): Promise<void> {
   try {
     const variables = JSON.parse(core.getInput('variables'))
-    const file = core.getInput('task-definition-file')
+    const file = core.getInput('task-definition')
 
     await updateTaskDefinitionFile(file, variables)
   } catch (error) {

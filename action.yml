@@ -5,7 +5,7 @@ inputs:
   variables:
     required: true
     description: 'JSON-stringified object of environment variables'
-  task-definition-file:
+  task-definition:
     required: true
     description: 'The task definition JSON file'
     default: 'task-definition.json'
