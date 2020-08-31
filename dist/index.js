@@ -146,7 +146,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const variables = JSON.parse(core.getInput('variables'));
-            const file = core.getInput('task-definition-file');
+            const file = core.getInput('task-definition');
             yield update_task_definition_1.updateTaskDefinitionFile(file, variables);
         }
         catch (error) {

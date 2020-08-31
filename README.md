@@ -12,5 +12,5 @@ jobs:
       - uses: INNOSOLProject/update-task-definition-env@v1
         with:
           variables: '{ "LOG_LEVEL": "debug", "FILE_PATH": "/tmp/bar" }'
-          task-definition-file: main-deployment-task-def.json
+          task-definition: main-deployment-task-def.json
 ```

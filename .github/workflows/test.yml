@@ -22,4 +22,4 @@ jobs:
       - uses: ./
         with:
           variables: '{}'
-          task-definition-file: __tests__/sample-task-def.json
+          task-definition: __tests__/sample-task-def.json
