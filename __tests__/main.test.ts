@@ -18,13 +18,23 @@ test('updates task def', async () => {
 
   const resultDef = JSON.parse(await fs.promises.readFile(path, 'utf-8'))
 
-  expect(resultDef.containerDefinitions.length).toEqual(3)
+  expect(resultDef.containerDefinitions.length).toEqual(4)
 
   resultDef.containerDefinitions.forEach((containerDef: any) => {
-    expect(containerDef.environment.length).toEqual(2)
+    if (
+      containerDef.environment.map((envVar: any) => envVar.name).includes('BAZ')
+    ) {
+      expect(containerDef.environment.length).toEqual(3)
+    } else {
+      expect(containerDef.environment.length).toEqual(2)
+    }
     containerDef.environment.forEach((envVar: any) => {
-      expect(variables.hasOwnProperty(envVar.name)).toEqual(true)
-      expect(envVar.value).toEqual(variables[envVar.name])
+      if (envVar.name === 'BAZ') {
+        expect(envVar.value).toEqual('QUUX')
+      } else {
+        expect(variables.hasOwnProperty(envVar.name)).toEqual(true)
+        expect(envVar.value).toEqual(variables[envVar.name])
+      }
     })
   })
 

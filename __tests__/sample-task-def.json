@@ -39,6 +39,14 @@
       "emptyContainerDef": true
     },
     {
+      "environment": [
+        {
+          "name": "BAZ",
+          "value": "QUUX"
+        }
+      ]
+    },
+    {
       "environment": []
     }
   ]
